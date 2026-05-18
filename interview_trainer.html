@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1a1a;--paper:#faf9f7;--accent:#c8651a;--accent2:#534AB7;--border:#e8e5df;--muted:#888;--card:#fff;--ok-bg:#EAF3DE;--ok-c:#3B6D11;--warn-c:#854F0B;--no-bg:#FCEBEC;--no-c:#A32D2D;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
+.app{max-width:720px;margin:0 auto;padding:32px 20px 80px}
+.header{text-align:center;margin-bottom:36px}
+.header h1{font-family:'Fraunces',serif;font-size:36px;font-weight:300;margin-bottom:6px}
+.header h1 em{font-style:italic;color:var(--accent)}
+.header p{font-size:13px;color:var(--muted)}
+.bwarn{background:#FAEEDA;border:1px solid #f0d5bc;border-radius:12px;padding:12px 16px;font-size:12px;color:var(--warn-c);margin-bottom:20px;display:none}
+.screen{display:none}.screen.show{display:block}
+.tip{background:var(--ok-bg);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--ok-c);margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
+.card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:400;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.card-badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;background:#EEEDFE;color:#534AB7;font-family:'DM Sans',sans-serif;margin-left:8px}
+.edit-btn{font-size:11px;font-weight:500;color:var(--accent);background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.edit-btn:hover{border-color:var(--accent);background:#fdf3ec}
+.inp{width:100%;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--paper);outline:none;transition:border-color .2s;line-height:1.6}
+.inp:focus{border-color:var(--accent)}
+textarea.inp{resize:vertical}
+input.inp{height:44px;font-size:14px}
+.tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:3px;margin-bottom:10px;width:fit-content}
+.tbtn{padding:5px 12px;border:none;border-radius:6px;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+.tbtn.active{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tpanel{display:none}.tpanel.show{display:block}
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:6px}
+.upload-zone:hover{border-color:var(--accent)}
+.ustatus{font-size:12px;font-weight:500;margin-top:4px}
+.cv-preview{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:12px;color:var(--ink);line-height:1.7;max-height:110px;overflow:hidden;position:relative;cursor:pointer}
+.cv-preview::after{content:'';position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,var(--paper))}
+.cv-preview.exp{max-height:none}.cv-preview.exp::after{display:none}
+.btn{padding:13px 20px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:var(--ink);color:white}.btn-primary:hover{background:#333}.btn-primary:disabled{background:#ccc;cursor:not-allowed}
+.btn-accent{background:var(--accent);color:white}.btn-accent:hover{background:#b35a16}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--ink)}.btn-outline:hover{border-color:var(--ink)}
+.btn-full{width:100%}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.btn.loading .spinner{display:block}.btn.loading .bl{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--ink);transition:all .15s;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+.chip.on{background:#534AB7;color:white;border-color:#534AB7}
+.pb{background:var(--border);border-radius:20px;height:4px;margin-bottom:8px;overflow:hidden}
+.pf{height:100%;background:var(--accent);border-radius:20px;transition:width .4s}
+.plbl{font-size:12px;color:var(--muted);text-align:right;margin-bottom:24px}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
+.qbadge{display:inline-block;font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;margin-bottom:14px;background:#EEEDFE;color:#534AB7}
+.qtext{font-family:'Fraunces',serif;font-size:22px;font-weight:400;line-height:1.4;margin-bottom:8px}
+.qhint{font-size:12px;color:var(--muted)}
+.mic-area{background:var(--card);border:2px dashed var(--border);border-radius:16px;padding:36px 24px;text-align:center;margin-bottom:20px;transition:all .3s}
+.mic-area.listening{border-color:var(--accent);background:#fdf3ec;border-style:solid}
+.mic-area.done{border-color:#3B6D11;background:var(--ok-bg);border-style:solid}
+.mic-icon{font-size:44px;margin-bottom:10px;line-height:1}
+.mic-status{font-size:14px;font-weight:500;margin-bottom:6px}
+.mic-sub{font-size:12px;color:var(--muted)}
+.tbox{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7;margin-top:14px;text-align:left;min-height:50px;display:none}
+.tbox.show{display:block}
+.wave{display:none;align-items:center;justify-content:center;gap:4px;height:36px;margin:10px 0}
+.mic-area.listening .wave{display:flex}
+.wb{width:4px;border-radius:4px;background:var(--accent);animation:wa .8s ease-in-out infinite}
+.wb:nth-child(1){animation-delay:0s;height:10px}.wb:nth-child(2){animation-delay:.1s;height:22px}
+.wb:nth-child(3){animation-delay:.2s;height:34px}.wb:nth-child(4){animation-delay:.3s;height:26px}
+.wb:nth-child(5){animation-delay:.4s;height:16px}.wb:nth-child(6){animation-delay:.3s;height:28px}.wb:nth-child(7){animation-delay:.2s;height:18px}
+@keyframes wa{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+.ctrls{display:flex;gap:10px;margin-bottom:16px}.ctrls .btn{flex:1}
+.fbcard{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.fbscore{display:flex;align-items:center;gap:16px;padding:20px 24px;border-bottom:1px solid var(--border)}
+.fbn{font-family:'Fraunces',serif;font-size:36px;font-weight:400}
+.fbtitle{font-size:15px;font-weight:500;margin-bottom:3px}
+.fbsub{font-size:12px;color:var(--muted);line-height:1.5}
+.fbsec{padding:14px 24px;border-bottom:1px solid var(--border)}.fbsec:last-child{border-bottom:none}
+.fblbl{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.fbtext{font-size:13px;line-height:1.6}
+.killref{background:#EEEDFE;border-radius:10px;padding:12px 14px;font-size:12px;color:#3C3489;line-height:1.6;font-style:italic;margin-top:8px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.sstat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.sn{font-family:'Fraunces',serif;font-size:26px;font-weight:400;color:var(--accent2)}
+.sl{font-size:11px;color:var(--muted);margin-top:2px}
+.sq{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:grid;grid-template-columns:minmax(0,1fr) 52px;gap:10px;align-items:center}
+.sqt{font-size:13px;line-height:1.4}
+.sqsc{font-family:'Fraunces',serif;font-size:18px;font-weight:400;text-align:right}
+.sh{color:#3B6D11}.sm{color:#854F0B}.sl2{color:#A32D2D}
+.lcard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;text-align:center;margin-bottom:20px}
+.dots{display:flex;justify-content:center;gap:6px;margin-bottom:14px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);animation:da 1.2s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes da{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.ltxt{font-size:13px;color:var(--muted)}
+.opt{font-size:11px;color:var(--muted);font-weight:400;margin-left:4px}
+.errbox{font-size:12px;color:var(--no-c);margin-top:8px;display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="header">
+  <h1>Interview <em>Trainer</em></h1>
+  <p id="headerSub">Voice practice · powered by Claude</p>
+</div>
+<div class="bwarn" id="bwarn">⚠️ Voice recognition works best in Chrome or Edge on desktop.</div>
+
+<!-- S1: Setup -->
+<div class="screen show" id="s-setup">
+  <div class="tip">💡 Paste the job description — Claude will generate targeted questions for that specific role and evaluate your answers using your CV.</div>
+
+  <div class="card">
+    <div class="card-title"><span>Role you are preparing for</span></div>
+    <input type="text" id="jobTitle" class="inp" placeholder="e.g. L&D Partner at Tines" style="margin-bottom:10px">
+    <div class="tabs">
+      <button class="tbtn active" onclick="stab('jd','paste',this)">Paste JD</button>
+      <button class="tbtn" onclick="stab('jd','upload',this)">Upload PDF</button>
+    </div>
+    <div id="jd-paste" class="tpanel show">
+      <textarea id="jdText" class="inp" rows="6" placeholder="Paste the full job description here..."></textarea>
+    </div>
+    <div id="jd-upload" class="tpanel">
+      <div class="upload-zone" onclick="document.getElementById('jdPdf').click()">
+        <div style="font-size:24px;margin-bottom:4px">📄</div>
+        <div style="font-size:13px;font-weight:500">Upload JD as PDF</div>
+      </div>
+      <input type="file" id="jdPdf" accept=".pdf" style="display:none" onchange="readPDF(this,'jdText','jd-st')">
+      <div class="ustatus" id="jd-st"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>Your CV <span class="card-badge">pre-loaded</span></span>
+      <button class="edit-btn" id="cvEditBtn" onclick="toggleEdit()">Edit</button>
+    </div>
+    <div id="cvPreview" class="cv-preview" onclick="this.classList.toggle('exp')"></div>
+    <div id="cvEditArea" style="display:none;margin-top:10px">
+      <div class="tabs">
+        <button class="tbtn active" onclick="stab('cv','text',this)">Text</button>
+        <button class="tbtn" onclick="stab('cv','pdf',this)">Upload PDF</button>
+      </div>
+      <div id="cv-text" class="tpanel show">
+        <textarea id="cvText" class="inp" rows="8"></textarea>
+      </div>
+      <div id="cv-pdf" class="tpanel">
+        <div class="upload-zone" onclick="document.getElementById('cvPdf').click()">
+          <div style="font-size:24px;margin-bottom:4px">📋</div>
+          <div style="font-size:13px;font-weight:500">Upload CV as PDF</div>
+        </div>
+        <input type="file" id="cvPdf" accept=".pdf" style="display:none" onchange="readPDF(this,'cvText','cv-st');updatePreview()">
+        <div class="ustatus" id="cv-st"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>Cover letter <span class="opt">optional</span></span></div>
+    <div class="tabs">
+      <button class="tbtn active" onclick="stab('cl','paste',this)">Paste text</button>
+      <button class="tbtn" onclick="stab('cl','upload',this)">Upload PDF</button>
+    </div>
+    <div id="cl-paste" class="tpanel show">
+      <textarea id="clText" class="inp" rows="4" placeholder="Paste your cover letter — Claude will use it to understand your positioning..."></textarea>
+    </div>
+    <div id="cl-upload" class="tpanel">
+      <div class="upload-zone" onclick="document.getElementById('clPdf').click()">
+        <div style="font-size:24px;margin-bottom:4px">📝</div>
+        <div style="font-size:13px;font-weight:500">Upload cover letter PDF</div>
+      </div>
+      <input type="file" id="clPdf" accept=".pdf" style="display:none" onchange="readPDF(this,'clText','cl-st')">
+      <div class="ustatus" id="cl-st"></div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-full" id="genBtn" onclick="generate()">
+    <div class="spinner"></div><span class="bl">Generate interview questions ↗</span>
+  </button>
+  <div class="errbox" id="setupErr"></div>
+</div>
+
+<!-- S1b: Categories -->
+<div class="screen" id="s-cats">
+  <div class="card">
+    <div class="card-title">Interview question categories</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Claude analysed the job description and created these categories. Select what you want to practise.</div>
+    <div class="cat-chips" id="catChips"></div>
+    <div id="catCount" style="font-size:12px;color:var(--muted);margin-bottom:14px"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="selAll()" style="font-size:13px;padding:10px 16px">Select all</button>
+      <button class="btn btn-primary btn-full" onclick="startSession()">Start session ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- S2: Question -->
+<div class="screen" id="s-question">
+  <div class="pb"><div class="pf" id="pf1" style="width:0%"></div></div>
+  <div class="plbl" id="pl1">Question 1 of 8</div>
+  <div class="qcard">
+    <div class="qbadge" id="qBadge">Category</div>
+    <div class="qtext" id="qText">Question</div>
+    <div class="qhint" id="qHint"></div>
+  </div>
+  <div class="mic-area" id="micArea">
+    <div class="mic-icon" id="micIcon">🎤</div>
+    <div class="wave"><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div></div>
+    <div class="mic-status" id="micStatus">Ready to record</div>
+    <div class="mic-sub" id="micSub">Press Record and answer naturally</div>
+    <div class="tbox" id="tbox"></div>
+  </div>
+  <div class="ctrls">
+    <button class="btn btn-accent" id="recBtn" onclick="toggleRec()">⏺ Record</button>
+    <button class="btn btn-outline" onclick="replayQ()">🔊 Replay</button>
+    <button class="btn btn-outline" onclick="skipQ()">Skip →</button>
+  </div>
+  <button class="btn btn-primary btn-full" id="submitBtn" onclick="submitAns()" style="display:none">Evaluate my answer ↗</button>
+</div>
+
+<!-- S3: Loading -->
+<div class="screen" id="s-loading">
+  <div class="lcard">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="ltxt" id="ltxt">Generating questions...</div>
+  </div>
+</div>
+
+<!-- S4: Feedback -->
+<div class="screen" id="s-feedback">
+  <div class="pb"><div class="pf" id="pf2" style="width:0%"></div></div>
+  <div class="plbl" id="pl2">Question 1 of 8</div>
+  <div class="fbcard">
+    <div class="fbscore">
+      <div class="fbn" id="fbN">8/10</div>
+      <div><div class="fbtitle" id="fbT">Strong answer</div><div class="fbsub" id="fbS"></div></div>
+    </div>
+    <div class="fbsec"><div class="fblbl">What you did well</div><div class="fbtext" id="fbG"></div></div>
+    <div class="fbsec"><div class="fblbl">What to add or sharpen</div><div class="fbtext" id="fbI"></div></div>
+    <div class="fbsec"><div class="fblbl">Suggested answer using your experience</div><div class="killref" id="fbK"></div></div>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-outline" style="flex:1" onclick="retryQ()">↩ Try again</button>
+    <button class="btn btn-primary" style="flex:1" id="nextBtn" onclick="nextQ()">Next →</button>
+  </div>
+</div>
+
+<!-- S5: Summary -->
+<div class="screen" id="s-summary">
+  <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;margin-bottom:6px">Session complete</div>
+  <div style="font-size:13px;color:var(--muted);margin-bottom:24px" id="sumJob"></div>
+  <div class="sgrid">
+    <div class="sstat"><div class="sn" id="sAvg">0</div><div class="sl">average score</div></div>
+    <div class="sstat"><div class="sn" id="sCnt">0</div><div class="sl">answered</div></div>
+    <div class="sstat"><div class="sn" id="sBest">0</div><div class="sl">best score</div></div>
+  </div>
+  <div style="font-size:13px;font-weight:500;margin-bottom:12px">Breakdown</div>
+  <div id="sumList"></div>
+  <div style="display:flex;gap:10px;margin-top:24px">
+    <button class="btn btn-outline" style="flex:1" onclick="goSetup()">New session</button>
+    <button class="btn btn-primary" style="flex:1" onclick="practiseWeak()">Practise weak answers ↗</button>
+  </div>
+</div>
+
+</div>
+<script>
+const DEFAULT_CV=`Doline Taquet — Enablement and L&D Professional
+Dublin, Ireland | doline.taq@gmail.com | +33 6 20 26 42 09
+Languages: French (Native), English (Fluent), Spanish (Professional)
+
+EXPERIENCE
+
+Learning, Development and Enablement Specialist — Block (Square), Dublin | 2023 to present
+Designed and delivered onboarding and continuing education programmes for CS and Product Support teams across EMEA, NA, and Australia using Rise 360. Served as EU Delivery DRI for Concierge: white-glove programme for enterprise sellers (1M+ GPV) across EU, AU, NA against FCR, QA, CSAT, and handle time metrics. In 2026, redesigned full learning experience using call driver analysis and built AI-powered facilitator hub using Claude Code. Built AI call simulator (AI Studio, Gemini) across 7 regions, 70 scenarios — integrated into North America NHT. Nominated AI Champion. Drove average QA improvement of approximately 17 percentage points. Partnered with CS Leadership and Sales Leads to align training calendars with business metrics.
+
+Assistant Project Manager, CS Operations — Block (Square), Dublin | 2023
+Coordinated operational improvement initiatives, workflow mapping, and process documentation.
+
+Product Support and Sales Specialist, Enterprise Accounts — Block (Square), Dublin | 2021 to 2023
+Enterprise support combining technical troubleshooting, feature adoption coaching, and consultative product recommendations. QA scores high 90s, 100% in multiple quarters. CSAT recognition Q2 and Q3 2022.
+
+French Technical Advisor — Apple, Dublin | 2020 to 2021
+Technical support and customer education in French and English.
+
+Business Event Planner — Wonderbox, Paris | Internship, 2019
+B2B sales prospecting, partner negotiation, B2B solution proposals.
+
+EDUCATION
+MSc International Business — EM Strasbourg, 2019
+International exchange — Sogang University, Seoul, 2017 to 2018
+
+TOOLS
+Rise 360 | AI Studio | Gemini | Claude Code | Notion | Google Workspace | Slack | Coda | Miro | LMS Platforms`;
+
+let genQs=[],sessionQs=[],curIdx=0,recognition=null,isRec=false,transcript='',results=[];
+
+function init(){
+  if(!('SpeechRecognition' in window||'webkitSpeechRecognition' in window))
+    document.getElementById('bwarn').style.display='block';
+  document.getElementById('cvText').value=DEFAULT_CV;
+  document.getElementById('cvPreview').textContent=DEFAULT_CV;
+  if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}
+}
+
+function toggleEdit(){
+  const editing=document.getElementById('cvEditArea').style.display!=='none';
+  if(editing){
+    document.getElementById('cvPreview').textContent=document.getElementById('cvText').value;
+    document.getElementById('cvEditArea').style.display='none';
+    document.getElementById('cvPreview').style.display='block';
+    document.getElementById('cvEditBtn').textContent='Edit';
+  } else {
+    document.getElementById('cvText').value=document.getElementById('cvPreview').textContent;
+    document.getElementById('cvEditArea').style.display='block';
+    document.getElementById('cvPreview').style.display='none';
+    document.getElementById('cvEditBtn').textContent='Save';
+  }
+}
+
+function updatePreview(){
+  document.getElementById('cvPreview').textContent=document.getElementById('cvText').value;
+}
+
+function stab(g,t,btn){
+  btn.closest('.card,.screen').querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[id^="'+g+'-"]').forEach(p=>{if(p.classList.contains('tpanel'))p.classList.remove('show');});
+  const p=document.getElementById(g+'-'+t);if(p)p.classList.add('show');
+}
+
+async function readPDF(input,tid,sid){
+  const file=input.files[0];if(!file)return;
+  const st=document.getElementById(sid);st.textContent='Reading...';st.style.color='var(--warn-c)';
+  try{
+    if(!window.pdfjsLib){
+      await new Promise((r,j)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';s.onload=r;s.onerror=j;document.head.appendChild(s);});
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+    const ab=await file.arrayBuffer();
+    const pdf=await window.pdfjsLib.getDocument({data:ab}).promise;
+    let txt='';
+    for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const c=await pg.getTextContent();txt+=c.items.map(s=>s.str).join(' ')+'\n';}
+    document.getElementById(tid).value=txt.trim();
+    if(tid==='cvText')updatePreview();
+    st.textContent='Loaded: '+file.name;st.style.color='var(--ok-c)';
+  }catch(e){st.textContent='Could not read PDF — paste the text.';st.style.color='var(--no-c)';}
+}
+
+async function generate(){
+  const jd=document.getElementById('jdText').value.trim();
+  if(!jd){showErr('Please paste the job description first.');return;}
+  const btn=document.getElementById('genBtn');btn.classList.add('loading');btn.disabled=true;
+  document.getElementById('setupErr').style.display='none';
+  document.getElementById('ltxt').textContent='Analysing job description and generating questions...';
+  showScreen('s-loading');
+  const cv=document.getElementById('cvText').value.trim();
+  const job=document.getElementById('jobTitle').value.trim()||'this role';
+  try{
+    const data=await api(`Analyse this job description and generate 10 targeted interview questions for: ${job}.
+
+Return JSON only, no preamble, no markdown:
+{"categories":["Cat 1","Cat 2"],"questions":[{"cat":"Category","q":"Question text","hint":"One sentence tip","idealPoints":"key points to cover"}]}
+
+Rules: 4-6 categories based on JD requirements. Mix behavioural, situational, and knowledge questions. Keep questions natural and role-specific.
+
+Job description:
+${jd}
+
+Candidate CV for context:
+${cv||'Not provided'}`,2000);
+    const txt=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    genQs=parsed.questions||[];
+    buildCats(parsed.categories||[]);
+    btn.classList.remove('loading');btn.disabled=false;
+    showScreen('s-cats');
+  }catch(e){
+    btn.classList.remove('loading');btn.disabled=false;
+    showErr('Could not generate questions. Check your connection.');
+    showScreen('s-setup');
+  }
+}
+
+function buildCats(cats){
+  const c=document.getElementById('catChips');c.innerHTML='';
+  cats.forEach(cat=>{
+    const d=document.createElement('div');
+    d.className='chip on';d.textContent=cat;d.dataset.cat=cat;
+    d.onclick=()=>{d.classList.toggle('on');updateCatCount();};
+    c.appendChild(d);
+  });
+  updateCatCount();
+}
+
+function updateCatCount(){
+  const on=document.querySelectorAll('.chip.on').length;
+  const total=genQs.filter(q=>new Set([...document.querySelectorAll('.chip.on')].map(c=>c.dataset.cat)).has(q.cat)).length;
+  document.getElementById('catCount').textContent=total+' questions selected across '+on+' categories';
+}
+
+function selAll(){document.querySelectorAll('.chip').forEach(c=>c.classList.add('on'));updateCatCount();}
+
+function startSession(){
+  const sel=new Set([...document.querySelectorAll('.chip.on')].map(c=>c.dataset.cat));
+  sessionQs=genQs.filter(q=>sel.has(q.cat)).sort(()=>Math.random()-.5);
+  if(!sessionQs.length){alert('Select at least one category.');return;}
+  results=[];curIdx=0;
+  const title=document.getElementById('jobTitle').value.trim()||'Interview practice';
+  document.getElementById('headerSub').textContent=title+' · Voice practice';
+  document.getElementById('sumJob').textContent=title;
+  showScreen('s-question');loadQ();
+}
+
+function loadQ(){
+  const q=sessionQs[curIdx];
+  const pct=Math.round((curIdx/sessionQs.length)*100)+'%';
+  document.getElementById('pf1').style.width=pct;
+  document.getElementById('pf2').style.width=pct;
+  const lbl=`Question ${curIdx+1} of ${sessionQs.length}`;
+  document.getElementById('pl1').textContent=lbl;
+  document.getElementById('pl2').textContent=lbl;
+  document.getElementById('qBadge').textContent=q.cat;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qHint').textContent=q.hint||'';
+  resetMic();speak(q.q);
+}
+
+function speak(txt){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(txt);
+  u.rate=0.92;u.lang='en-GB';
+  const vs=speechSynthesis.getVoices();
+  const v=vs.find(v=>v.lang.startsWith('en')&&v.name.toLowerCase().includes('female'))||vs.find(v=>v.lang.startsWith('en'));
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+
+function replayQ(){speak(sessionQs[curIdx].q);}
+
+function resetMic(){
+  isRec=false;transcript='';
+  document.getElementById('micArea').className='mic-area';
+  document.getElementById('micIcon').textContent='🎤';
+  document.getElementById('micStatus').textContent='Ready to record';
+  document.getElementById('micSub').textContent='Press Record and answer naturally';
+  document.getElementById('tbox').textContent='';
+  document.getElementById('tbox').classList.remove('show');
+  document.getElementById('recBtn').textContent='⏺ Record';
+  document.getElementById('submitBtn').style.display='none';
+}
+
+function toggleRec(){isRec?stopRec():startRec();}
+
+function startRec(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Voice recognition not supported. Please use Chrome.');return;}
+  speechSynthesis.cancel();
+  recognition=new SR();
+  recognition.continuous=true;recognition.interimResults=true;recognition.lang='en-GB';
+  let interim='';
+  recognition.onresult=e=>{
+    interim='';transcript='';
+    for(let i=0;i<e.results.length;i++){
+      if(e.results[i].isFinal)transcript+=e.results[i][0].transcript+' ';
+      else interim+=e.results[i][0].transcript;
+    }
+    const tb=document.getElementById('tbox');tb.textContent=transcript+interim;tb.classList.add('show');
+  };
+  recognition.onerror=e=>{if(e.error==='not-allowed')alert('Microphone access denied.');stopRec();};
+  recognition.onend=()=>{if(isRec)recognition.start();};
+  recognition.start();isRec=true;
+  document.getElementById('micArea').className='mic-area listening';
+  document.getElementById('micIcon').textContent='🔴';
+  document.getElementById('micStatus').textContent='Listening...';
+  document.getElementById('micSub').textContent='Speak clearly — press Stop when done';
+  document.getElementById('recBtn').textContent='⏹ Stop';
+}
+
+function stopRec(){
+  if(recognition){recognition.onend=null;recognition.stop();}
+  isRec=false;
+  if(transcript.trim().length>10){
+    document.getElementById('micArea').className='mic-area done';
+    document.getElementById('micIcon').textContent='✅';
+    document.getElementById('micStatus').textContent='Recording complete';
+    document.getElementById('micSub').textContent='Submit for evaluation or record again';
+    document.getElementById('submitBtn').style.display='block';
+  } else {
+    document.getElementById('micArea').className='mic-area';
+    document.getElementById('micIcon').textContent='🎤';
+    document.getElementById('micStatus').textContent='No speech detected — try again';
+    document.getElementById('micSub').textContent='Make sure microphone is allowed in the browser';
+  }
+  document.getElementById('recBtn').textContent='⏺ Record again';
+}
+
+async function submitAns(){
+  if(!transcript.trim()){alert('Please record your answer first.');return;}
+  document.getElementById('ltxt').textContent='Evaluating your answer...';
+  showScreen('s-loading');
+  const q=sessionQs[curIdx];
+  const cv=document.getElementById('cvText').value.trim();
+  const cl=document.getElementById('clText').value.trim();
+  const job=document.getElementById('jobTitle').value.trim()||'this role';
+  try{
+    const data=await api(`You are an expert interview coach. Evaluate this spoken answer.
+
+Role: ${job}
+Question: ${q.q}
+Key points to cover: ${q.idealPoints||''}
+Candidate answer (transcribed): ${transcript}
+${cv?'Candidate CV:\n'+cv:''}
+${cl?'Cover letter:\n'+cl:''}
+
+Be honest and specific. Reference the candidate's real experience from their CV when relevant.
+Return JSON only:
+{"score":"8/10","numericScore":8,"title":"3-5 word verdict","summary":"One sentence assessment","good":"What they did well — 2-3 specific sentences","improve":"What to add or sharpen — very specific, reference their CV if they missed a relevant example","suggested":"A concise suggested answer using their real CV experience"}`,1200);
+    const txt=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const fb=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    results.push({q:q.q,cat:q.cat,score:fb.numericScore||7,label:fb.score||'7/10'});
+    showFB(fb);showScreen('s-feedback');
+  }catch(e){alert('Evaluation failed. Please try again.');showScreen('s-question');}
+}
+
+function showFB(fb){
+  const n=fb.numericScore||7;
+  const col=n>=8?'#534AB7':n>=6?'#854F0B':'#A32D2D';
+  document.getElementById('fbN').textContent=fb.score||'7/10';
+  document.getElementById('fbN').style.color=col;
+  document.getElementById('fbT').textContent=fb.title||'';
+  document.getElementById('fbS').textContent=fb.summary||'';
+  document.getElementById('fbG').textContent=fb.good||'';
+  document.getElementById('fbI').textContent=fb.improve||'';
+  document.getElementById('fbK').textContent=fb.suggested||'';
+  document.getElementById('nextBtn').textContent=curIdx>=sessionQs.length-1?'See summary ↗':'Next question →';
+}
+
+function retryQ(){showScreen('s-question');resetMic();speak(sessionQs[curIdx].q);}
+function skipQ(){results.push({q:sessionQs[curIdx].q,cat:sessionQs[curIdx].cat,score:0,label:'—',skipped:true});curIdx++;curIdx>=sessionQs.length?showSum():loadQ();}
+function nextQ(){curIdx++;curIdx>=sessionQs.length?showSum():(showScreen('s-question'),loadQ());}
+
+function showSum(){
+  const ans=results.filter(r=>!r.skipped);
+  const avg=ans.length?Math.round(ans.reduce((s,r)=>s+r.score,0)/ans.length*10)/10:0;
+  const best=ans.length?Math.max(...ans.map(r=>r.score)):0;
+  document.getElementById('sAvg').textContent=avg+'/10';
+  document.getElementById('sCnt').textContent=ans.length;
+  document.getElementById('sBest').textContent=best+'/10';
+  const list=document.getElementById('sumList');list.innerHTML='';
+  results.forEach(r=>{
+    const cls=r.skipped?'sm':r.score>=8?'sh':r.score>=6?'sm':'sl2';
+    list.innerHTML+=`<div class="sq"><div class="sqt">${r.q}</div><div class="sqsc ${cls}">${r.label||'—'}</div></div>`;
+  });
+  showScreen('s-summary');
+}
+
+function practiseWeak(){
+  const wk=results.filter(r=>!r.skipped&&r.score<7).map(r=>r.q);
+  if(!wk.length){alert('No weak answers — great session!');return;}
+  sessionQs=genQs.filter(q=>wk.includes(q.q));results=[];curIdx=0;
+  showScreen('s-question');loadQ();
+}
+
+function goSetup(){showScreen('s-setup');}
+
+async function api(msg,max=2000){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,messages:[{role:'user',content:msg}]})
+  });
+  return r.json();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showErr(msg){const e=document.getElementById('setupErr');e.textContent=msg;e.style.display='block';}
+
+init();
+</script>
+</body>
+</html>
