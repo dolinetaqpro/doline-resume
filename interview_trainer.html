@@ -195,11 +195,16 @@ input.inp{height:44px;font-size:14px}
 
 <!-- S2: Question -->
 <div class="screen" id="s-question">
+<<<<<<< HEAD
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
     <button class="btn btn-outline" onclick="exitSession()" style="font-size:12px;padding:7px 14px">← Back to categories</button>
     <div style="font-size:12px;color:var(--muted)" id="pl1">Question 1 of 8</div>
   </div>
   <div class="pb"><div class="pf" id="pf1" style="width:0%"></div></div>
+=======
+  <div class="pb"><div class="pf" id="pf1" style="width:0%"></div></div>
+  <div class="plbl" id="pl1">Question 1 of 8</div>
+>>>>>>> 932662df5e0087718be58d763283484490b41c72
   <div class="qcard">
     <div class="qbadge" id="qBadge">Category</div>
     <div class="qtext" id="qText">Question</div>
@@ -564,6 +569,7 @@ function practiseWeak(){
   showScreen('s-question');loadQ();
 }
 
+<<<<<<< HEAD
 function exitSession(){
   if(results.length>0){
     if(!confirm('Exit session? Your progress so far will be lost.')) return;
@@ -574,6 +580,8 @@ function exitSession(){
   showScreen('s-cats');
 }
 
+=======
+>>>>>>> 932662df5e0087718be58d763283484490b41c72
 function goSetup(){showScreen('s-setup');}
 
 async function api(msg,max=2000){

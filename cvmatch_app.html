@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Match — Doline</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root{
+  --ink:#1A1A2E;
+  --soft:#F7F6F2;
+  --accent:#C8651A;
+  --purple:#534AB7;
+  --border:#E0DED8;
+  --mid:#666;
+  --light:#999;
+  --ok:#3B6D11;
+  --ok-bg:#EAF3DE;
+  --warn:#854F0B;
+  --warn-bg:#FAEEDA;
+  --no:#A32D2D;
+  --no-bg:#FCEBEB;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--soft);color:var(--ink);min-height:100vh}
+
+.header{padding:32px 40px 0;border-bottom:1px solid var(--border);background:#fff}
+.header-inner{max-width:1000px;margin:0 auto}
+.logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.tagline{font-size:13px;color:var(--mid);margin-top:4px;margin-bottom:24px}
+.steps{display:flex;gap:0}
+.step-tab{font-size:12px;font-weight:500;padding:10px 20px;color:var(--light);border-bottom:2px solid transparent;cursor:default;white-space:nowrap}
+.step-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.step-tab.done{color:var(--purple)}
+
+.main{max-width:1000px;margin:0 auto;padding:32px 40px}
+
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px}
+.card-title{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:6px}
+.card-sub{font-size:12px;color:var(--mid);margin-bottom:18px}
+
+textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);resize:vertical;background:var(--soft);line-height:1.6;outline:none;transition:border-color .2s}
+textarea:focus{border-color:var(--purple)}
+
+.profile-box{background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:12px;color:var(--mid);line-height:1.7;max-height:160px;overflow-y:auto}
+.profile-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px 24px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.btn:hover{opacity:.88}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--purple);border:1px solid var(--purple)}
+.btn-ghost:hover{background:#EEEDFE;opacity:1}
+
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.spinner.show{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.score-block{display:flex;align-items:center;gap:20px;padding:20px;background:var(--soft);border-radius:10px;margin-bottom:20px}
+.score-ring{width:80px;height:80px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:3px solid var(--purple)}
+.score-n{font-family:'DM Serif Display',serif;font-size:26px;color:var(--purple)}
+.score-l{font-size:10px;color:var(--purple);font-weight:500}
+.score-text{}
+.score-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.score-desc{font-size:12px;color:var(--mid);line-height:1.6}
+
+.audit-row{display:grid;grid-template-columns:minmax(0,1fr) 80px;gap:12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border)}
+.audit-row:last-child{border-bottom:none}
+.audit-req{font-size:13px;font-weight:500;margin-bottom:3px}
+.audit-note{font-size:12px;color:var(--mid);line-height:1.5}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;white-space:nowrap;text-align:center}
+.badge-ok{background:var(--ok-bg);color:var(--ok)}
+.badge-warn{background:var(--warn-bg);color:var(--warn)}
+.badge-no{background:var(--no-bg);color:var(--no)}
+
+.angle-box{background:#EEEDFE;border-radius:10px;padding:16px 18px;margin:16px 0}
+.angle-title{font-size:12px;font-weight:600;color:var(--purple);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.angle-item{font-size:12px;color:#3C3489;line-height:1.7;padding-left:14px;position:relative;margin-top:3px}
+.angle-item::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--purple)}
+
+.structure-card{border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px}
+.structure-label{font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px}
+.structure-text{font-size:12px;color:var(--mid);line-height:1.5}
+
+.letter-output{background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:20px;font-size:13px;color:var(--ink);line-height:1.8;white-space:pre-wrap;font-family:'DM Sans',sans-serif}
+
+.section-head{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mid);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:14px}
+
+.validate-row{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.validate-msg{font-size:12px;color:var(--mid)}
+
+.hidden{display:none}
+.step-section{display:none}.step-section.active{display:block}
+
+.progress{height:3px;background:var(--border);border-radius:2px;margin-bottom:24px}
+.progress-bar{height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
+
+.loading-msg{font-size:13px;color:var(--mid);margin-top:8px;font-style:italic}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo"><div class="logo-dot"></div> CV Match</div>
+    <div class="tagline">Paste a job offer. Get an audit, a strategy, and a cover letter.</div>
+    <div class="steps">
+      <div class="step-tab active" id="tab1">1. Job offer</div>
+      <div class="step-tab" id="tab2">2. Your profile</div>
+      <div class="step-tab" id="tab3">3. Audit</div>
+      <div class="step-tab" id="tab4">4. Cover letter</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="progress"><div class="progress-bar" id="progress" style="width:25%"></div></div>
+
+  <!-- STEP 1 -->
+  <div class="step-section active" id="step1">
+    <div class="card">
+      <div class="card-title">Job offer</div>
+      <div class="card-sub">Paste the full job description here.</div>
+      <textarea id="jobInput" rows="14" placeholder="Paste the job description here..."></textarea>
+    </div>
+    <button class="btn" onclick="goToStep2()">Continue <span>&#8594;</span></button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-section" id="step2">
+    <div class="card">
+      <div class="card-title">Your profile</div>
+      <div class="card-sub">Add any recent experience, skills, or context you want included. Your core profile is pre-loaded below.</div>
+      <div class="profile-label">Your base profile</div>
+      <div class="profile-box" id="baseProfile"></div>
+      <div style="margin-top:16px">
+        <div class="profile-label">Additional context (optional)</div>
+        <textarea id="extraContext" rows="5" placeholder="e.g. I recently got certified in CIPD level 5, I led a leadership programme for 30 managers last quarter..."></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="goToStep(1)">&#8592; Back</button>
+      <button class="btn" id="analyseBtn" onclick="runAudit()">
+        <span class="spinner" id="spinner1"></span>
+        Analyse match
+      </button>
+    </div>
+    <div class="loading-msg hidden" id="loadingMsg1">Analysing your profile against the job requirements...</div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-section" id="step3">
+    <div class="card">
+      <div class="card-title">Match audit</div>
+      <div class="card-sub">How your profile maps to this role.</div>
+      <div id="auditOutput"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <button class="btn btn-ghost" onclick="goToStep(2)">&#8592; Back</button>
+      <button class="btn" id="letterBtn" onclick="generateLetter()">
+        <span class="spinner" id="spinner2"></span>
+        Generate cover letter
+      </button>
+    </div>
+    <div class="loading-msg hidden" id="loadingMsg2">Writing your cover letter...</div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-section" id="step4">
+    <div class="card">
+      <div class="card-title">Cover letter</div>
+      <div class="card-sub">Review, edit, and copy.</div>
+      <div class="letter-output" id="letterOutput" contenteditable="true"></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="goToStep(3)">&#8592; Back</button>
+      <button class="btn" onclick="copyLetter()">Copy letter</button>
+      <button class="btn btn-ghost" onclick="regenerateLetter()">
+        <span class="spinner" id="spinner3"></span>
+        Regenerate
+      </button>
+    </div>
+    <div class="loading-msg hidden" id="loadingMsg3">Rewriting...</div>
+  </div>
+</div>
+
+<script>
+const BASE_PROFILE = `Doline Taquet — Enablement and L&D Professional
+Based in Dublin, Ireland since 2019. French, Cameroonian roots. Trilingual: French (native), English (fluent), Spanish (professional).
+
+Block (Square) — 5 years total
+- Learning, Development and Enablement Specialist (2023 to present): Designed and delivered onboarding and continuing education programmes for CS and Product Support across EMEA, NA, and Australia. EU Delivery DRI for Concierge (white-glove programme, enterprise sellers 1M+ GPV). This year redesigned the full learning experience using call driver analysis and Claude Code. Built AI call simulator (AI Studio, Gemini) across 7 regions, 70 scenarios. Partnered with CS Leadership and Sales Leads on training calendars aligned to product launches.
+- Assistant Project Manager, CS Operations (2023): Workflow mapping, stakeholder interviews, process documentation.
+- Product Support and Sales Specialist, Enterprise Accounts (2021 to 2023): Technical troubleshooting, feature adoption coaching, consultative product recommendations to enterprise sellers. QA high 90s, 100% multiple quarters. CSAT recognition Q2 and Q3 2022.
+
+Apple — French Technical Advisor (2020 to 2021): Technical support and customer education in French and English.
+
+Earlier: Business Event Planner at Wonderbox (internship, Paris, 2019) — B2B sales prospecting, partner negotiation. Event Marketing Junior at Les Echos Le Parisien (internship, Paris, 2019) — trade show coordination.
+
+Education: MSc International Business, EM Strasbourg 2019. Exchange at Sogang University, Seoul, South Korea 2017 to 2018.
+
+Key achievements: AI simulator nominated AI Champion. Concierge DRI across 3 markets. EU facilitator playbook now EMEA standard. BPO Lisbon site launch. QA uplift +17pts through coaching.
+
+Tools: Articulate Rise 360, AI Studio, Gemini, Claude Code, Notion, Google Workspace, Slack, Coda, Miro, LMS Platforms.`;
+
+let currentStep = 1;
+let auditData = null;
+let structureData = null;
+
+document.getElementById('baseProfile').textContent = BASE_PROFILE;
+
+function goToStep2(){
+  if(!document.getElementById('jobInput').value.trim()){
+    alert('Please paste the job description first.');
+    return;
+  }
+  goToStep(2);
+}
+
+function goToStep(n){
+  document.querySelectorAll('.step-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  document.querySelectorAll('.step-tab').forEach((t,i)=>{
+    t.classList.remove('active','done');
+    if(i+1===n) t.classList.add('active');
+    if(i+1<n) t.classList.add('done');
+  });
+  document.getElementById('progress').style.width=(n*25)+'%';
+  currentStep=n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function callClaude(prompt){
+  const response = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      messages:[{role:'user',content:prompt}]
+    })
+  });
+  const data = await response.json();
+  return data.content[0].text;
+}
+
+async function runAudit(){
+  const job = document.getElementById('jobInput').value.trim();
+  const extra = document.getElementById('extraContext').value.trim();
+  const btn = document.getElementById('analyseBtn');
+  const spinner = document.getElementById('spinner1');
+  const loadingMsg = document.getElementById('loadingMsg1');
+
+  btn.disabled=true;
+  spinner.classList.add('show');
+  loadingMsg.classList.remove('hidden');
+
+  const profile = BASE_PROFILE + (extra ? '\n\nAdditional context: '+extra : '');
+
+  const prompt = `You are an expert recruiter and career coach. Analyse this candidate profile against the job description and return ONLY a JSON object with this exact structure:
+{
+  "score": "8/10",
+  "scoreLabel": "Strong match",
+  "summary": "2-3 sentence honest summary of fit",
+  "requirements": [
+    {"req": "requirement name", "note": "specific note about candidate fit", "status": "ok|warn|no", "badge": "badge label"}
+  ],
+  "angles": ["key angle 1 for the cover letter", "key angle 2", "key angle 3"],
+  "structure": [
+    {"label": "P1", "desc": "what to cover in paragraph 1"},
+    {"label": "P2", "desc": "what to cover in paragraph 2"},
+    {"label": "P3", "desc": "what to cover in paragraph 3"},
+    {"label": "P4", "desc": "closing"}
+  ]
+}
+
+Return ONLY the JSON, no markdown, no explanation.
+
+JOB DESCRIPTION:
+${job}
+
+CANDIDATE PROFILE:
+${profile}`;
+
+  try{
+    const raw = await callClaude(prompt);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    auditData = JSON.parse(clean);
+    structureData = auditData.structure;
+    renderAudit(auditData);
+    goToStep(3);
+  }catch(e){
+    alert('Something went wrong. Please try again.');
+    console.error(e);
+  }finally{
+    btn.disabled=false;
+    spinner.classList.remove('show');
+    loadingMsg.classList.add('hidden');
+  }
+}
+
+function renderAudit(data){
+  const scoreColor = data.score.startsWith('9')||data.score.startsWith('10') ? '#3B6D11' :
+                     data.score.startsWith('8') ? '#534AB7' :
+                     data.score.startsWith('7') ? '#854F0B' : '#A32D2D';
+
+  let html = `<div class="score-block">
+    <div class="score-ring" style="border-color:${scoreColor}">
+      <div class="score-n" style="color:${scoreColor}">${data.score}</div>
+      <div class="score-l" style="color:${scoreColor}">match</div>
+    </div>
+    <div class="score-text">
+      <div class="score-title">${data.scoreLabel}</div>
+      <div class="score-desc">${data.summary}</div>
+    </div>
+  </div>`;
+
+  html += '<div class="section-head">Requirements audit</div>';
+  data.requirements.forEach(r=>{
+    const badgeClass = r.status==='ok' ? 'badge-ok' : r.status==='warn' ? 'badge-warn' : 'badge-no';
+    html += `<div class="audit-row">
+      <div><div class="audit-req">${r.req}</div><div class="audit-note">${r.note}</div></div>
+      <div class="badge ${badgeClass}">${r.badge}</div>
+    </div>`;
+  });
+
+  html += '<div class="angle-box" style="margin-top:20px"><div class="angle-title">Key angles for your letter</div>';
+  data.angles.forEach(a=>{
+    html += `<div class="angle-item">${a}</div>`;
+  });
+  html += '</div>';
+
+  html += '<div class="section-head" style="margin-top:20px">Proposed letter structure</div>';
+  data.structure.forEach(s=>{
+    html += `<div class="structure-card">
+      <div class="structure-label">${s.label}</div>
+      <div class="structure-text">${s.desc}</div>
+    </div>`;
+  });
+
+  document.getElementById('auditOutput').innerHTML = html;
+}
+
+async function generateLetter(){
+  const job = document.getElementById('jobInput').value.trim();
+  const extra = document.getElementById('extraContext').value.trim();
+  const btn = document.getElementById('letterBtn');
+  const spinner = document.getElementById('spinner2');
+  const loadingMsg = document.getElementById('loadingMsg2');
+
+  btn.disabled=true;
+  spinner.classList.add('show');
+  loadingMsg.classList.remove('hidden');
+
+  const profile = BASE_PROFILE + (extra ? '\n\nAdditional context: '+extra : '');
+  const structure = structureData ? structureData.map(s=>s.label+': '+s.desc).join('\n') : '';
+
+  const prompt = `You are an expert career coach writing a cover letter for Doline Taquet.
+
+STRICT RULES:
+- Write in first person, natural human tone
+- No em-dashes or long dashes as separators
+- No bullet points, only flowing prose
+- Maximum 4 paragraphs
+- No emotional language, no "I am thrilled" or similar
+- Facts first, implication last
+- Do not use the word "passionate" or "excited"
+- End with: "Warm regards, Doline"
+- Do not include date or address header, just start with "Dear Hiring Team,"
+
+Use this paragraph structure:
+${structure}
+
+JOB DESCRIPTION:
+${job}
+
+CANDIDATE PROFILE:
+${profile}
+
+Write the full cover letter now.`;
+
+  try{
+    const letter = await callClaude(prompt);
+    document.getElementById('letterOutput').textContent = letter;
+    goToStep(4);
+  }catch(e){
+    alert('Something went wrong. Please try again.');
+    console.error(e);
+  }finally{
+    btn.disabled=false;
+    spinner.classList.remove('show');
+    loadingMsg.classList.add('hidden');
+  }
+}
+
+async function regenerateLetter(){
+  const spinner = document.getElementById('spinner3');
+  const loadingMsg = document.getElementById('loadingMsg3');
+  spinner.classList.add('show');
+  loadingMsg.classList.remove('hidden');
+  await generateLetter();
+  spinner.classList.remove('show');
+  loadingMsg.classList.add('hidden');
+  goToStep(4);
+}
+
+function copyLetter(){
+  const text = document.getElementById('letterOutput').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = event.target;
+    btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent='Copy letter';},2000);
+  });
+}
+</script>
+</body>
+</html>
