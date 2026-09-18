@@ -21,7 +21,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .tab{font-size:11px;font-weight:600;padding:10px 14px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
 .tab:hover{color:#534AB7}
 .tab.active{color:#534AB7;border-bottom-color:#534AB7;background:#fff}
-.panel{display:none;padding:20px 22px}.panel.active{display:block}
+.panel{display:none;padding:20px 22px}.panel.active{display:flex;flex-direction:column;justify-content:center;flex:1}
 .sec-head{font-size:10px;font-weight:600;letter-spacing:.07em;color:#534AB7;text-transform:uppercase;border-bottom:1px solid #AFA9EC;padding-bottom:5px;margin-bottom:12px}
 .divider{font-size:10px;font-weight:600;letter-spacing:.07em;color:#888;text-transform:uppercase;padding:10px 0 8px;margin-top:6px;border-top:1px dashed #E0DED8}
 .job{display:grid;grid-template-columns:8px minmax(0,1fr);gap:0 10px;margin-bottom:14px;position:relative}
@@ -51,6 +51,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .stat-l{font-size:10px;color:#888;margin-top:2px}
 .edu-deg{font-size:12px;font-weight:600;color:#1A1A2E}
 .edu-school{font-size:11px;color:#3C3489;margin-top:2px;line-height:1.6}
+@media (max-width:640px){
+  body{padding:16px 10px}
+  .wrap{grid-template-columns:1fr}
+  .sidebar{border-right:none;border-bottom:1px solid #D0CEEE}
+  .tab-row{overflow-x:auto}
+  .stat-row{grid-template-columns:repeat(3,1fr);gap:6px}
+}
 </style>
 </head>
 <body>
@@ -80,6 +87,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
     <span class="tag">Rise 360</span>
     <span class="tag">AI Studio</span>
     <span class="tag">Gemini</span>
+    <span class="tag">ChatGPT Enterprise</span>
     <span class="tag">Claude Code</span>
     <span class="tag">Notion</span>
     <span class="tag">Coda</span>
